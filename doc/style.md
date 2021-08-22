@@ -41,3 +41,7 @@ In addition, you should:
   probably a good idea to adhere to a similar indentation discipline
   anyway. Generally speaking, the easier it is for the TA to read your
   code, the more likely you are to receive a good grade.
+
+* Refer to
+  [here](https://www.pyret.org/docs/latest/Pyret_Style_Guide.html) for
+  style advice from the authors of Pyret.
