@@ -1,9 +1,10 @@
 # Organization of Programming Languages
 
-## Fall 2021
-[Course website](https://github.com/OUPL/cs3200-f21)
-
 [Course Discord server](https://discord.gg/jXJA6424Dy)
+
+[Pyret style guide](./doc/style.md)
+
+## Fall 2021
 
 There are thousands of programming languages, from A#.NET to ZPL and everything in between. Do you need to know all of them to be a good programmer/engineer/computer scientist? 
 
