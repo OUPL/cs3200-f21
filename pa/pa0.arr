@@ -5,7 +5,7 @@
    ID:
 |#
 
-#| 1. Define a function 'eucl-dist' that returns the Euclidean
+#| 1. (3 pts) Define a function 'eucl-dist' that returns the Euclidean
    distance between two points (x1,y1) and (x2,y2). Look up Euclidean
    distance on Wikipedia if you forget how it's calculated. A Pyret
    library that may be useful here is:
@@ -32,9 +32,9 @@ where:
   eucl-dist(-3, -4, -1, -2) is%(within-abs(0.001)) ~2.828
 end
 
-#| 2. Define two functions, 'bool-and' and 'bool-or', that return,
-   respectively, the Boolean conjunction or disjunction of their
-   Boolean arguments b1 and b2.
+#| 2. (4 pts) Define two functions, 'bool-and' and 'bool-or', that
+   return, respectively, the Boolean conjunction or disjunction of
+   their Boolean arguments b1 and b2.
 
    Pyret includes builtin infix functions "and" and "or" -- use these
    only as a last resort (instead, try to encode conjunction and
@@ -59,10 +59,10 @@ where:
   bool-or(true, true) is true
 end
 
-#| 3. Using 'bool-and' and 'bool-or' as defined in exercise 3, define
-   a function, maj, that returns the majority result of three boolean
-   values b1, b2, and b3. For example, if b1 and b2 are true while b3
-   is false, maj should return true.
+#| 3. (3 pts) Using 'bool-and' and 'bool-or' as defined in exercise 3,
+   define a function, maj, that returns the majority result of three
+   boolean values b1, b2, and b3. For example, if b1 and b2 are true
+   while b3 is false, maj should return true.
    
    As in exercises 1 and 2, your function should pass all the
    test cases in the check block. |#
@@ -80,9 +80,9 @@ where:
   maj(true, true, true) is true
 end
 
-#| 4. Modify the following function, 'hello-world', so that it passes
-   its test case. Note that there are multiple correct solutions to
-   this exercise. |#
+#| 4. (2 pts) Modify the following function, 'hello-world', so that it
+   passes its test case. Note that there are multiple correct
+   solutions to this exercise. |#
 
 fun hello-world() -> String:
   s1 = "hello"
@@ -92,13 +92,13 @@ where:
   hello-world() is "hello\n" + " " + "\"world\"" + "!! :-)"
 end
 
-#| 5. Define a function 'fib' that computes the nth fibonacci
+#| 5. (3 pts) Define a function 'fib' that computes the nth fibonacci
    number. Recall that the fibonacci sequence can be defined by the
    following set of (recursive ;)) equations:
 
    fib(0) = 0
    fib(1) = 1
-   fib(n) = fib(n - 2) + fib(n - 1), when n >= 2
+   fib(n) = fib(n - 2) + fib(n - 1), for n >= 2
 
    'NumNonNegative' is the type of nonnegative Numbers. See
    https://www.pyret.org/docs/latest/numbers.html to read about

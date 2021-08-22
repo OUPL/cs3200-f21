@@ -6,7 +6,7 @@ means a few things:
 * No mutable variables. All variables should be immutable (the default
   in Pyret) unless explicit permission to use mutation is given.
 
-* All iteration is done via recursion or higher-order combinators such
+* All iteration is done via recursion or functional combinators such
   as 'map' and 'fold' (which themselves are implemented via
   recursion). I.e., no imperative-style 'while' or 'for' loops.
 
@@ -36,8 +36,8 @@ In addition, you should:
   end
   ```
 
-* Use reasonable formatting. Pyret is not indentation-sensitive in the
-  way that, e.g., Python is, but it's probably a good idea to adhere
-  to a similar indentation discipline anyway. Generally speaking, the
-  easier it is for the TA to read your code, the more likely you are
-  to receive a good grade.
+* Use reasonable variable names and formatting. Pyret is not
+  indentation-sensitive in the way that, e.g., Python is, but it's
+  probably a good idea to adhere to a similar indentation discipline
+  anyway. Generally speaking, the easier it is for the TA to read your
+  code, the more likely you are to receive a good grade.
