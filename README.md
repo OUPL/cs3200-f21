@@ -58,7 +58,7 @@ The schedule is subject to revision.
 
 | Week                        | Topic                                 | Reading                        | Assignment |
 |-----------------------------|---------------------------------------|--------------------------------|------------|
-| Week 1 (23 Aug) | Intro. to PL, Pyret | [PAPL 1](https://papl.cs.brown.edu/2020/Introduction.html), [3](https://papl.cs.brown.edu/2020/getting-started.html), [4.1-4.3](https://papl.cs.brown.edu/2020/Naming_Values.html), [5.1-5.3](https://papl.cs.brown.edu/2020/From_Repeated_Expressions_to_Functions.html) | [PA0: Intro. to Pyret](pa/0.md) (28 Aug) |
+| Week 1 (23 Aug) | Intro. to PL, Pyret | [PAPL 1](https://papl.cs.brown.edu/2020/Introduction.html), [3](https://papl.cs.brown.edu/2020/getting-started.html), [4.1-4.3](https://papl.cs.brown.edu/2020/Naming_Values.html), [5.1-5.3](https://papl.cs.brown.edu/2020/From_Repeated_Expressions_to_Functions.html), Supplementary: [Persistence of Memory](https://existentialtype.wordpress.com/2011/04/09/persistence-of-memory/) | [PA0: Intro. to Pyret](pa/0.md) (28 Aug) |
 | Week 2 (30 Aug) | Natural numbers, induction, lists | [PAPL 6.1-6.5](https://papl.cs.brown.edu/2020/Conditionals_and_Booleans.html), [10](https://papl.cs.brown.edu/2020/processing-lists.html) | Q0 (3 Sep) |
 | Week 3 (6 Sep) | Structured and conditional data, binary trees | [PAPL 11](https://papl.cs.brown.edu/2020/intro-struct-data.html) | [PA1: Lists](pa/1.md) (11 Sep) |
 | Week 4 (13 Sep) | Collections, recursive data | [PAPL 12](https://papl.cs.brown.edu/2020/Collections_of_Structured_Data.html), [13](https://papl.cs.brown.edu/2020/Recursive_Data.html) | Q1 (17 Sep) |
