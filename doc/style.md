@@ -4,7 +4,8 @@ In this course we will be programming in a functional style. This
 means a few things:
 
 * No mutable variables. All variables should be immutable (the default
-  in Pyret) unless explicit permission to use mutation is given.
+  in Pyret) unless explicit permission to use mutation is given by the
+  instructor.
 
 * All iteration is done via recursion or functional combinators such
   as 'map' and 'fold' (which themselves are implemented via
@@ -41,6 +42,12 @@ In addition, you should:
   probably a good idea to adhere to a similar indentation discipline
   anyway. Generally speaking, the easier it is for the TA to read your
   code, the more likely you are to receive a good grade.
+
+* Ensure that your program is well-typed (i.e., that it passes Pyret's
+  static typechecker).
+
+* Avoid redundant expressions. E.g., `b == true` can be replaced by
+  just `b`, and `b == false` by `not(b)`.
 
 * Refer to
   [here](https://www.pyret.org/docs/latest/Pyret_Style_Guide.html) for
