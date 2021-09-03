@@ -1,7 +1,14 @@
 
+# fun id<A>(x :: Any) -> A:
+#   id(x)
+# end
+
 # Compute the length of a list.
 fun list-length<A>(l :: List<A>) -> Number:
-  ...
+  cases (List) l:
+    | empty => 0
+    | link(_, r) => 1 + list-length(r)
+  end
 where:
   list-length(empty) is 0
   list-length([list:]) is 0
@@ -12,7 +19,10 @@ end
 
 # Compute the sum of a list of Numbers.
 fun list-sum(l :: List<Number>) -> Number:
-  ...
+  cases (List) l:
+    | empty => 0
+    | link(f, r) => f + list-sum(r)
+  end
 where:
   list-sum(empty) is 0
   list-sum([list: 5]) is 5
@@ -23,7 +33,10 @@ end
 
 # Check if an element is in a list.
 fun list-member<A>(x :: A, l :: List<A>) -> Boolean:
-  ...
+  cases (List) l:
+    | empty => false
+    | link(f, r) => (f == x) or list-member(x, r)
+  end
 where:
   list-member("hello", [list: "hello", "world"]) is true
   list-member("world", [list: "hello", "world"]) is true
@@ -32,17 +45,34 @@ end
 
 # Compute the lengths of a list of Strings.
 fun list-str-lens(l :: List<String>) -> List<Number>:
-  ...
+  cases (List) l:
+    | empty => empty
+    | link(f, r) => link(string-length(f), list-str-lens(r))
+  end
 where:
   list-str-lens([list: "hello", "world", "!"]) is [list: 5, 5, 1]
 end
 
 # Remove all non-positive numbers from a list.
 fun list-pos-nums(l :: List<Number>) -> List<Number>:
-  ...
+  cases (List) l:
+    | empty => empty
+    | link(f, r) => if f > 0:
+        link(f, list-pos-nums(r))
+      else:
+        list-pos-nums(r)
+      end
+  end
 where:
   list-pos-nums([list: 1, 5, -3, 3, -10, 0, 100]) is [list: 1, 5, 3, 100]
 end
+
+# fun my-is-empty<A>(l :: List<A>) -> Boolean:
+#   cases (List) l:
+#     | empty => true
+#     | else => false
+#   end
+# end
 
 # Remove every other element from a list (keeping the first).
 fun list-alternating<A>(l :: List<A>) -> List<A>:
@@ -80,6 +110,12 @@ where:
   list-avg([list: 1, 100]) is 50.5
   list-avg([list: 1, 2, 3]) is 2
   list-avg(range(1, 10)) is 5
+end
+
+fun list-concat(l :: List<String>) -> String:
+  ...
+where:
+  list-concat([list: "hello ", "world", "!"]) is "hello world!"
 end
 
 # General map combinator.
