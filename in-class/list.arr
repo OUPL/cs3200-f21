@@ -81,6 +81,11 @@ where:
   list-alternating(range(0, 10)) is [list: 0, 2, 4, 6, 8]
 end
 
+# Append two lists together.
+fun list-append<A>(l1 :: List<A>, l2 :: List<A>) -> List<A>:
+  ...
+end
+
 # Compute the nth triangular number.
 fun tri(n :: Number) -> Number:
   if n <= 0:
