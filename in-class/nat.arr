@@ -27,11 +27,20 @@ end
 
 nat-plus(S(O), S(O))
 
+=>
 
-cases (Nat) O:
+cases (Nat) S(O):
 | O => S(O)
 | S(nn) => S(nat-plus(nn, S(O)))
 end
+
+=>
+
+S(nat-plus(O, S(O)))
+
+=>
+
+S(S(O))
 
 
 fun pred(n :: Nat) -> Nat:
