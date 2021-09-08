@@ -11,6 +11,36 @@ fun nat-plus(n :: Nat, m :: Nat) -> Nat:
   end
 end
 
+
+# nat-plus(O, S(O))
+
+# =>
+
+# cases (Nat) O:
+# | O => S(O)
+# | S(nn) => S(nat-plus(nn, S(O)))
+# end
+
+# =>
+
+# S(O)
+
+nat-plus(S(O), S(O))
+
+
+cases (Nat) O:
+| O => S(O)
+| S(nn) => S(nat-plus(nn, S(O)))
+end
+
+
+fun pred(n :: Nat) -> Nat:
+  cases (Nat) n:
+    | O => raise("pred of O")
+    | S(nn) => nn
+  end
+end
+
 #|
    Theorem: ∀ n :: Nat, nat-plus(n, O) = n.
    Proof by induction.

@@ -67,16 +67,16 @@ where:
   list-pos-nums([list: 1, 5, -3, 3, -10, 0, 100]) is [list: 1, 5, 3, 100]
 end
 
-# fun my-is-empty<A>(l :: List<A>) -> Boolean:
-#   cases (List) l:
-#     | empty => true
-#     | else => false
-#   end
-# end
-
 # Remove every other element from a list (keeping the first).
 fun list-alternating<A>(l :: List<A>) -> List<A>:
-  ...
+  cases (List) l:
+    | empty => empty
+    | link(f, r) =>
+      cases (List) r:
+        | empty => link(f, empty)
+        | link(_, r2) => link(f, list-alternating(r2))
+      end
+  end
 where:
   list-alternating(range(0, 10)) is [list: 0, 2, 4, 6, 8]
 end
@@ -84,6 +84,8 @@ end
 # Append two lists together.
 fun list-append<A>(l1 :: List<A>, l2 :: List<A>) -> List<A>:
   ...
+where:
+  list-append([list: 1, 2], [list: 5]) is [list: 1, 2, 5]
 end
 
 # Compute the nth triangular number.
@@ -97,7 +99,13 @@ end
 
 # Compute a list of running sums from a list of numbers.
 fun list-running-sum(l :: List<Number>) -> List<Number>:
-  ...
+  fun list-running-sum-aux(ll :: List<Number>, acc :: Number) -> List<Number>:
+    cases (List) ll:
+      | empty => empty
+      | link(f, r) => link(acc + f, list-running-sum-aux(r, acc + f))
+    end
+  end
+  list-running-sum-aux(l, 0)
 where:
   list-running-sum([list:]) is [list:]
   list-running-sum([list: 1]) is [list: 1]
@@ -109,7 +117,7 @@ end
 
 # Compute the average of a list of numbers.
 fun list-avg(l :: List<Number>) -> Number:
-  ...
+  list-sum(l) / list-length(l)
 where:
   list-avg([list: 0, 100]) is 50
   list-avg([list: 1, 100]) is 50.5
