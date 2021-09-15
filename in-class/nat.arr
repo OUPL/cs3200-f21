@@ -6,8 +6,8 @@ end
 
 fun nat-plus(n :: Nat, m :: Nat) -> Nat:
   cases (Nat) n:
-    | O => m
-    | S(nn) => S(nat-plus(nn, m))
+    | O => m                    # n = O
+    | S(x) => S(nat-plus(x, m)) # n = S(x)
   end
 end
 
@@ -25,22 +25,22 @@ end
 
 # S(O)
 
-nat-plus(S(O), S(O))
+# nat-plus(S(O), S(O))
 
-=>
+# =>
 
-cases (Nat) S(O):
-| O => S(O)
-| S(nn) => S(nat-plus(nn, S(O)))
-end
+# cases (Nat) S(O):
+# | O => S(O)
+# | S(nn) => S(nat-plus(nn, S(O)))
+# end
 
-=>
+# =>
 
-S(nat-plus(O, S(O)))
+# S(nat-plus(O, S(O)))
 
-=>
+# =>
 
-S(S(O))
+# S(S(O))
 
 
 fun pred(n :: Nat) -> Nat:
