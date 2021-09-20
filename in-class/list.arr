@@ -3,6 +3,7 @@
 #   id(x)
 # end
 
+
 # Compute the length of a list.
 fun list-length<A>(l :: List<A>) -> Number:
   cases (List) l:
