@@ -177,7 +177,7 @@ end
 type Env = (String -> Number)
 
 # The initial environment contains no bindings.
-init-env = lam(x :: String): raise(x + " is unbound") end
+init-env :: Env = lam(x :: String): raise(x + " is unbound") end
 
 # Look up the value bound to an identifier in an environment.
 fun lookup(env :: Env, x :: String) -> Number:
