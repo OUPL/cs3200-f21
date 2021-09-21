@@ -126,6 +126,8 @@ where:
     node(node(leaf(3), leaf(1)), node(leaf(2), leaf(5)))) violates is-perfect
   node(node(node(leaf(0), leaf(4)), node(leaf(4), leaf(10))),
     node(node(leaf(3), leaf(1)), node(leaf(2), leaf(5)))) satisfies is-perfect
+  node(node(node(leaf(2), leaf(3)), leaf(0)), node(leaf(2), node(leaf(1), leaf(0))))
+    violates is-perfect
 end
 
 ############################
