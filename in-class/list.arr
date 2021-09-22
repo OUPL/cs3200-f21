@@ -1,4 +1,4 @@
-
+include either
 # fun id<A>(x :: Any) -> A:
 #   id(x)
 # end
@@ -132,38 +132,60 @@ where:
   list-concat([list: "hello ", "world", "!"]) is "hello world!"
 end
 
-# General map combinator.
 fun list-map<A, B>(g :: (A -> B), l :: List<A>) -> List<B>:
-  ...
+  cases (List) l:
+    | empty => empty
+    | link(x, r) => link(g(x), list-map(g, r))
+  end
+where:
+  list-map(lam(n): n + 1 end, [list: 0, 1, 2]) is [list: 1, 2, 3]
 end
+
+# l1 :: List<Either<String, Boolean>> =
+#   list-map(left, [list: "hello", " world", "!"])
 
 # Reimplement list-str-lens using list-map.
 fun list-str-lens2(l :: List<String>) -> List<Number>:
-  ...
+  list-map(string-length, l)
 where:
   list-str-lens2([list: "hello", "world", "!"]) is [list: 5, 5, 1]
 end
 
-# General filter combinator.
 fun list-filter<A>(g :: (A -> Boolean), l :: List<A>) -> List<A>:
-  ...
+  cases (List) l:
+    | empty => empty
+    | link(x, r) =>
+      if g(x):
+        link(x, list-filter(g, r))
+      else:
+        list-filter(g, r)
+      end
+  end
 end
 
 # Reimplement list-pos-nums using list-filter.
 fun list-pos-nums2(l :: List<Number>) -> List<Number>:
-  ...
+  list-filter(lam(n): n > 0 end, l)
 where:
   list-pos-nums2([list: 1, 5, -3, 3, -10, 0, 100]) is [list: 1, 5, 3, 100]
 end
 
 # General fold-right combinator.
 fun list-foldr<A, B>(g :: (A, B -> B), l :: List<A>, acc :: B) -> B:
-  ...
+  cases (List) l:
+    | empty => acc
+    | link(x, r) => g(x, list-foldr(g, r, acc))
+  end
+where:
+  list-foldr(lam(n, m): n + m end, [list: 1, 2, 3], 0) is 6
 end
 
 # General fold-left combinator.
 fun list-foldl<A, B>(g :: (B, A -> B), acc :: B,  l :: List<A>) -> B:
-  ...
+  cases (List) l:
+    | empty => acc
+    | link(x, r) => list-foldl(g, g(acc, x), r)
+  end
 end
 
 # Reimplement list-length using list-foldl.
