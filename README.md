@@ -73,7 +73,7 @@ The schedule is subject to revision.
 | Week 13 (15 Nov) | Parametric polymorphism | [PAPL 30](https://papl.cs.brown.edu/2020/para-poly.html) | [PA6: Scheme1](pa/6.md) (20 Nov) |
 | Week 14 (22 Nov) | TBD / Thanksgiving | TBD | No quiz |
 | Week 15 (29 Nov) | TBD / Final review | TBD | No quiz -- study for finals! |
-| Exam week (6 Dec) | **FINAL EXAM** | | |
+| Exam week (6 Dec) | **FINAL EXAM**: Wednesday 12/8/21 12:20pm in Stocker 103 | | |
 
 Assignments are due in Blackboard at 11:59pm unless otherwise specified. **Q0**, **Q1**, etc., denote quizzes in Blackboard, generally due on the Fridays of weeks with no due programming assignments (PAs).
 
