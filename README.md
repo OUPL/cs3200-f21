@@ -63,7 +63,7 @@ The schedule is subject to revision.
 | Week 3 (6 Sep) | Structured and conditional data | [PAPL 11](https://papl.cs.brown.edu/2020/intro-struct-data.html), Supplementary: [Types as Sets](https://guide.elm-lang.org/appendix/types_as_sets.html) | [PA1: Lists](pa/1.md) (11 Sep) |
 | Week 4 (13 Sep) | Collections, recursive data | [PAPL 12](https://papl.cs.brown.edu/2020/Collections_of_Structured_Data.html), [13](https://papl.cs.brown.edu/2020/Recursive_Data.html) | Q1 (17 Sep) |
 | Week 5 (20 Sep) | Higher-order functions | [PAPL 15](https://papl.cs.brown.edu/2020/testing.html), [16](https://papl.cs.brown.edu/2020/func-as-data.html), Supplementary: [A tutorial on the universality and expressiveness of fold](https://www.cs.nott.ac.uk/~pszgmh/fold.pdf) (sections 1-3.1) | [PA2: Binary trees](pa/2.md) (25 Sep) |
-| Week 6 (27 Sep) | Balanced BSTs | [PAPL 18](https://papl.cs.brown.edu/2020/set-representations.html) | Q2 (1 Oct) |
+| Week 6 (27 Sep) | Balanced BSTs | [PAPL 18](https://papl.cs.brown.edu/2020/set-representations.html) | Q2 (29 Sep) |
 | Week 7 (4 Oct) | State, Equality | [PAPL 22](https://papl.cs.brown.edu/2020/State__Change__and_More_Equality.html) | [PA3: BSTs](pa/3.md) (9 Oct) |
 | Week 8 (11 Oct) | Abstract syntax, parsing | [PAPL 24](https://papl.cs.brown.edu/2020/Processing_Programs__Parsing.html), Supplementary: TAPL 3 | Midterm Exam (15 Oct) |
 | Week 9 (18 Oct) | Interpretation | [PAPL 25](https://papl.cs.brown.edu/2020/first-interp.html) | [PA4: Scheme0](pa/4.md) (23 Oct) |
