@@ -3,7 +3,12 @@ include either
 #   id(x)
 # end
 
-
+fun f<A, B>(l :: List<A>) -> B:
+  cases (List) l:
+    | empty => b
+    | link(a, r) => list-length(r) 
+  end
+  
 # Compute the length of a list.
 fun list-length<A>(l :: List<A>) -> Number:
   cases (List) l:
