@@ -1,8 +1,8 @@
 #| 0. Write your name and OU ID (the part before the
    "@" in your email address) below:
 
-   NAME:
-   ID:
+   NAME: Andriy Kalinichenko
+   ID: ak461717
 |#
 
 # I highly recommend using this equality function instead of the '=='
@@ -158,7 +158,10 @@ end
    binary search tree invariant as expressed in function bst-inv. |#
 
 fun bst-lookup(n :: Number, t :: BST) -> Boolean:
-  ... # Fill in here
+  cases (BST) t:
+    | bst-leaf => false
+    | bst-node(m,l,r) => if eq(m,n) : true else: bst-lookup(n,l) or bst-lookup(n,r) end
+  end
 where:
   bst-lookup(3, bst-leaf) is false
   bst-lookup(2, b1) is false
@@ -184,7 +187,13 @@ end
    bst-insert function should leave the tree unchanged. |#
 
 fun bst-insert(n :: Number, t :: BST) -> BST:
-  ... # Fill in here
+  cases (BST) t:
+    | bst-leaf => bst-node(n, bst-leaf, bst-leaf)
+    | bst-node(m,l,r) => if (eq(m,n)) : bst-node(m,l,r) 
+      else if (n < m) : bst-insert(n,l)
+      else: bst-insert(n,r)
+          end
+        end
 where:
   bst-insert(3, bst-leaf) satisfies bst-inv
   bst-insert(1, b1) satisfies bst-inv
@@ -295,8 +304,41 @@ r8 = rbt-node(black, 1,
   rbt-node(red, 2, bleaf, bleaf))
 # END RBTrees used for testing
 
+fun next-node(t :: RBTree<Number>) -> Color:
+  cases (RBTree<Number>) t:
+    | rbt-leaf(bl) => black
+    | rbt-node(c,v,l,r) => if (c == red) : red else: black end
+  end
+end
+
+fun leaf-blk(t :: RBTree<Number>) -> Boolean:
+  cases (RBTree<Number>) t:
+    | rbt-leaf(c) => if (c == black) : true else: false end
+    | rbt-node(c,v,l,r) => leaf-blk(l) and leaf-blk(r)
+  end
+end
+
+fun child-color(t :: RBTree<Number>) -> Boolean:
+  cases (RBTree<Number>) t:
+    | rbt-leaf(bl) => true
+    | rbt-node(cl,v,l,r) => if (cl == red) : 
+        if ((next-node(l) == black) and (next-node(r) == black)) : child-color(l) and child-color(r)
+        else: false end
+      else: if (cl == black) : child-color(l) and child-color(r) else: ... end end 
+  end
+end
+
+fun even-blk(t :: RBTree<Number>) -> Number:
+  cases (RBTree<Number>) t:
+    | rbt-leaf(bl) => 1
+    | rbt-node(cl,v,l,r) => if (cl == red) : 0 + even-blk(l) + even-blk(r) else: 1 + even-blk(l) + even-blk(r) end 
+  end
+end
 fun rbt-inv(t :: RBTree<Number>) -> Boolean:
-  ... # Fill in here
+  cases (RBTree<Number>) t:
+    | rbt-leaf(c) => if (c == bleaf) : true else: false end
+    | rbt-node(c,v,l,r) => (c == black) and leaf-blk(t) and child-color(t) and ((even-blk(l) == even-blk(r)) and ((even-blk(l) + even-blk(r)) > 4))
+  end
 where:
   r1 satisfies rbt-inv
   r2 violates rbt-inv
@@ -400,7 +442,7 @@ fun print-stream<A>(s :: Stream<A>) -> Void:
 end
 
 # Uncomment the following line to print the entire stream (warning:
-# doesn't terminate – hence the Void return type).
+# doesn't terminate - hence the Void return type).
 # print-stream(lz-map(num-to-roughnum, stream-sums(pi-sequence)))
 
 #| 5. (3 pts) Define a function 'approximate' that takes a tolerance
