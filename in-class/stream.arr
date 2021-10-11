@@ -38,8 +38,7 @@ check:
 end
 
 
-fun lz-map<A, B>(f :: (A -> B), s :: Stream<A>) ->
-  Stream<B>:
+fun lz-map<A, B>(f :: (A -> B), s :: Stream<A>) -> Stream<B>:
   lz-link(f(lz-first(s)), lam(): lz-map(f, lz-rest(s)) end)
 end
 

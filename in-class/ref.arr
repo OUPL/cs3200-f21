@@ -1,11 +1,11 @@
 
 data Box<A>: box(ref v :: A) end
 
-b1 = box(1)
+# b1 = box(1)
 
-# print(b1!v)
+# # print(b1!v)
 
-b1!{v : 5}
+# b1!{v : 5}
 
 # print(b1!v)
 
@@ -23,6 +23,15 @@ fun mutate2(x :: Box<Number>, y :: Box<Number>) -> {}:
     {}
   end
 end
+
+b1 = box(5)
+# b2 = box(6)
+
+print(b1)
+
+mutate2(b1, b1)
+
+print(b1)
 
 
 # fun list-length(l :: List<Number>) -> Number:
@@ -56,8 +65,8 @@ end
 
 counter :: ( -> Number) = mk-counter()
 
-print(counter())
-print(counter())
+# print(counter())
+# print(counter())
 
 
 
