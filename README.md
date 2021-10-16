@@ -65,7 +65,7 @@ The schedule is subject to revision.
 | Week 5 (20 Sep) | Higher-order functions | [PAPL 15](https://papl.cs.brown.edu/2020/testing.html), [16](https://papl.cs.brown.edu/2020/func-as-data.html), Supplementary: [A tutorial on the universality and expressiveness of fold](https://www.cs.nott.ac.uk/~pszgmh/fold.pdf) (sections 1-3.1) | [PA2: Binary trees](pa/2.md) (25 Sep) |
 | Week 6 (27 Sep) | Balanced BSTs | [PAPL 18](https://papl.cs.brown.edu/2020/set-representations.html) | Q2 (29 Sep) |
 | Week 7 (4 Oct) | State, Equality | [PAPL 20](https://papl.cs.brown.edu/2020/Sharing_and_Equality.html), [22](https://papl.cs.brown.edu/2020/State__Change__and_More_Equality.html) | [PA3: BSTs](pa/3.md) (9 Oct) |
-| Week 8 (11 Oct) | Abstract syntax, parsing | [PAPL 24](https://papl.cs.brown.edu/2020/Processing_Programs__Parsing.html), Supplementary: TAPL 3 | Midterm Exam (15 Oct) |
+| Week 8 (11 Oct) | Abstract syntax, parsing | [PAPL 24](https://papl.cs.brown.edu/2020/Processing_Programs__Parsing.html), Supplementary: TAPL 3 (on BB) | Midterm Exam (15 Oct) |
 | Week 9 (18 Oct) | Interpretation | [PAPL 25](https://papl.cs.brown.edu/2020/first-interp.html) | [PA4: Scheme0 Core](pa/4.md) (23 Oct) |
 | Week 10 (25 Oct) | Interpreting conditionals and functions | [PAPL 26](https://papl.cs.brown.edu/2020/growing-lang.html), [27](https://papl.cs.brown.edu/2020/Interpreting_Functions.html) | Q3 (29 Oct) |
 | Week 11 (1 Nov) | Types, typing judgments | [PAPL 28](https://papl.cs.brown.edu/2020/types.html), Supplementary: TAPL 8 | [PA5: Typed Scheme0](pa/5.md) (6 Nov) |
