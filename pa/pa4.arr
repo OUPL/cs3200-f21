@@ -131,7 +131,7 @@ end
 |#
 
 
-#| Part 1: Scheme0 Core Parser
+#| (10 pts) Part 1: Scheme0 Core Parser
    
    In part 1, your job is to write a program called 'parseExp' that
    translates Pyret S-expressions into the Scheme0 Core abstract
@@ -326,7 +326,7 @@ where:
 end
 
 
-#| Part 2: Scheme0 Core Interpreter
+#| (10 pts) Part 2: Scheme0 Core Interpreter
 
    In this part, you will implement an interpreter for the Scheme0
    Core language.
