@@ -16,6 +16,21 @@ fun eq<A>(x :: A, y :: A) -> Boolean:
   x == y
 end
 
+fun curry<A, B, C>(f :: (A, B -> C)) -> (A -> (B -> C)):
+  lam(a): lam(b): f(a, b) end end
+end
+
+# Curried eq.
+eqc = curry(eq)
+
+fun compose<A, B, C>(g :: (B -> C), f :: (A -> B)) -> (A -> C):
+  lam(a): g(f(a)) end
+end
+
+fun thunk<A>(x :: A) -> ( -> A):
+  lam(): x end
+end
+
 #| Result type code |#
 
 data Error:
@@ -190,6 +205,7 @@ end
 #| END Scheme0 Core Abstract Syntax |#
 
 # Example expressions
+ex0 = ident("x")
 ex1 = val(num(3))
 ex2 = val(num(100))
 ex3 = val(bool(true))
@@ -234,15 +250,18 @@ fun as-list<A>(s :: Sexp, k :: (List<Sexp> -> Result<A>)) -> Result<A>:
   end
 end
 
+fun assert<A, B>(s :: A, f :: (A -> Boolean), r :: ( -> Result<B>)) -> Result<B>:
+  if f(s): r() else: err(ParseError("assert")) end
+end
+
+# Parse a not Unop.
+fun parseNot(s :: Sexp) -> Result<Unop>:
+  assert(s, eqc(S.s-sym("not")), thunk(ok(unot)))
+end
+
 # Parse a Unop.
 fun parseUnop(s :: Sexp) -> Result<Unop>:
-  as-sym(s, lam(sym):
-      if sym == "not":
-        ok(unot)
-      else:
-        err(ParseError("parseUnop"))
-      end
-    end)
+  parseNot(s) # only one possibility
 end
 
 # Parse a number value.
@@ -282,6 +301,7 @@ end
 fun parse(s :: String) -> Result<Exp>:
   parseExp(S.read-s-exp(s))
 where:
+  parse("x") is ok(ex0)
   # values
   parse("3") is ok(ex1)
   parse("   3") is ok(ex1)
@@ -369,6 +389,7 @@ end
 
 # These tests provide evidence that your interpreter is working properly.
 check "interp(...)":
+  interp(init-env, ex0) satisfies is-interp-error
   interp(init-env, ex1) is ok(num(3))
   interp(init-env, ex2) is ok(num(100))
   interp(init-env, ex3) is ok(bool(true))
@@ -395,6 +416,7 @@ end
 # These tests provide evidence that your parser and interpreter are
 # both working properly.
 check "run(...)":
+  run("x") satisfies is-interp-error # unbound variable
   run("3") is ok(num(3))
   run("true") is ok(bool(true))
   run("(* 3 4)") is ok(num(12))
