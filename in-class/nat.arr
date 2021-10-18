@@ -1,8 +1,16 @@
+# data Foo: Foo end
+
 
 data Nat:
   | O
   | S(n :: Nat)
 end
+
+data Zero: end
+
+data One: tt end
+
+data Pair<A, B>: pair(a :: A, b :: B) end
 
 fun nat-plus(n :: Nat, m :: Nat) -> Nat:
   cases (Nat) n:

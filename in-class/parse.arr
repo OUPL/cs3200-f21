@@ -48,8 +48,8 @@ fun lift2<A, B, C>(f :: (A, B -> C)) -> (Result<A>, Result<B> -> Result<C>):
   lam(x, y): seq(x, lam(a): seq(y, lam(b): ok(f(a, b)) end) end) end
 end
 
-# Apply a function in the Result type (chickenbutt).
-fun app<A, B>(f :: Result<(A -> B)>, x :: Result<A>) -> Result<B>:
+# Function application in the Result type (chickenbutt).
+fun ap<A, B>(f :: Result<(A -> B)>, x :: Result<A>) -> Result<B>:
   seq(f, lam(g): seq(x, lam(a): ok(g(a)) end) end)
 end
 
