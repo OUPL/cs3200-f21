@@ -35,7 +35,6 @@ end
 
 data Error:
   | ParseError(msg :: String)
-  | TypeError(msg :: String)
   | InterpError(msg :: String)
 end
 
@@ -48,13 +47,6 @@ end
 fun is-parse-error<A>(r :: Result<A>) -> Boolean:
   cases (Result) r:
     | err(e) => is-ParseError(e)
-    | else => false
-  end
-end
-
-fun is-type-error<A>(r :: Result<A>) -> Boolean:
-  cases (Result) r:
-    | err(e) => is-TypeError(e)
     | else => false
   end
 end
@@ -115,18 +107,18 @@ end
 #############################
 
 
-#| In this assignment, you'll be extending the parser from PA4 to
-   support new concrete syntax forms (that are desugared to Scheme0
-   Core abstract syntax), and implementing a typechecker for Scheme0
-   Core. The new concrete syntax is given by the following BNF grammar:
-
-   Types
-   t ::= tnum
-       | tbool
-
+#| In this assignment, you'll be extending the parser and interpreter
+   from PA4 to support the Scheme1 language. The core language (and
+   thus the interpreter) is extended to include anonymous functions
+   and function application, and the source language is further
+   extended by a handful of derived forms (handled by the
+   parser). Note that although 'let' expressions were in the core
+   language of Scheme0, they are derived forms in Scheme1. The new
+   concrete syntax is given by the following BNF grammar:
+   
    Unary Operators
    u ::= not           # negate a boolean
-       | neg           # negate a number (NEW)
+       | neg           # NEW (derived): negate a number
 
    Binary Operators
    b ::= +             # add two numbers
@@ -135,8 +127,8 @@ end
        | /             # divide two numbers
        | =             # equality on numbers
        | <             # less-than on numbers
-       | and           # boolean conjunction (NEW)
-       | or            # boolean disjunction (NEW)
+       | and           # NEW (derived): boolean conjunction
+       | or            # NEW (derived): boolean disjunction
 
    Values:
    v ::= true          # boolean true
@@ -149,26 +141,23 @@ end
        | (u e)           # unary op u applied to expression e
        | (b e1 e2)       # binary op b applied to e1, e2
        | (if e1 e2 e3)   # if e1 then e2 else e3
-       | (let x e2 e3)   # let x = the value of e2 in e3 (in which x may appear free)
+       | (let x e2 e3)   # NEW (derived)
+       | (fun x e)       # NEW (core): anonymous function with parameter x and body e
+       | (e1 e2)         # NEW (core): function application (e1 applied to argument e2)
 |#
 
 
-#| (5 pts) Part 1: Scheme0 Parser
+#| (5 pts) Part 1: Scheme1 Parser
    
-   In part 1, you will extend the Scheme0 core parser from PA4 to
-   support the additional syntactic forms of the Scheme0 source
+   In part 1, you will extend the Scheme0 Core parser from PA4 to
+   support the additional syntactic forms of the Scheme1 source
    language. The updated abstract syntax is given below (the same as
    in PA4 but with a few new constructors). If you don't have a
    working parser from PA4, you can contact the TA (Jacob Schaupp
    js400421@ohio.edu) to obtain a copy to start from.
 |#
 
-#| Scheme0 Abstract Syntax |#
-
-data Type:
-  | tnum
-  | tbool
-end
+#| Scheme1 Abstract Syntax |#
 
 data Unop:
   | unot
@@ -189,6 +178,8 @@ end
 data Val:
   | bool(b :: Boolean)
   | num(n :: Number)
+    # closures are created by the interpreter and don't appear in source programs.
+  | clos(env :: Env<Val>, x :: String, body :: Exp)
 end
 
 data Exp:
@@ -198,8 +189,10 @@ data Exp:
   | binexp(op :: Binop, e1 :: Exp, e2 :: Exp)
   | ite(e1 :: Exp, e2 :: Exp, e3 :: Exp)
   | letx(x :: String, e1 :: Exp, e2 :: Exp)
+  | fn(x :: String, body :: Exp)
+  | app(e1 :: Exp, e2 :: Exp)
 end
-
+    
 # A couple helper functions for binops.
 fun is-bool-binop(b :: Binop) -> Boolean:
   cases (Binop) b:
@@ -227,14 +220,16 @@ fun is-core(e :: Exp) -> Boolean:
         | else => is-core(e1) and is-core(e2)
       end
     | ite(e1, e2, e3) => is-core(e1) and is-core(e2) and is-core(e3)
-    | letx(x, e1, e2) => is-core(e1) and is-core(e2)
+    | letx(_, _, _) => false
+    | fn(_, e1) => is-core(e1)
+    | app(e1, e2) => is-core(e1) and is-core(e2)
   end
 end
 
 # The core language is the subset of the source language that satisfies is-core.
 type ExpC = Exp%(is-core)
 
-#| END Scheme0 Abstract Syntax |#
+#| END Scheme1 Abstract Syntax |#
 
 # Example expressions
 ex0 = ident("x")
@@ -268,13 +263,24 @@ ex40 = letx("b",
   ite(binexp(lt, val(num(1)), val(num(1))), val(num(4)), val(num(5))),
   binexp(sub, ident("b"), val(num(9))))
 ex41 = letx("q", binexp(equ, val(num(3)), val(num(3))), ident("q"))
+ex50 = fn("x", ident("x"))
+ex51 = fn("y", binexp(add, ident("y"), val(num(1))))
+ex52 = fn("x", unexp(unot, ident("x")))
+ex60 = app(ex50, val(num(123)))
+ex61 = app(ex51, val(num(2)))
+ex62 = app(ex51, val(bool(false)))
+ex63 = app(ex52, val(bool(false)))
+ex64 = app(ex52, val(num(3)))
+ex65 = app(ex60, val(bool(true)))
+# Ω = (λx. x x) (λx. x x)
+omega = app(fn("x", app(ident("x"), ident("x"))), fn("x", app(ident("x"), ident("x"))))
 
 # Type synonym for the s-expression type.
 type Sexp = S.S-Exp
 
-# Convert an s-expression to a Scheme0 expression.
+# Convert an s-expression to a Scheme1 expression.
 fun parseExp(s :: Sexp) -> Result<Exp>:
-  ... # Fill in here
+  ... # Fill in here (start by copying over your parsing code from PA4)
 end
 
 # The overall parser is the composition of parseExp with S.read-s-exp.
@@ -318,7 +324,6 @@ where:
   parse("(let x 3 x)") is ok(ex30)
   parse("( let  yzw (+ 4 x) x  )") is ok(ex31)
   parse("(let x (+ 4 (+ x x)) (* x y))") is ok(ex32)
-  parse("  ( let x (+ 4 (+ x x)) (*x  y  ) )") satisfies is-parse-error
   parse("(let x 3 x x)") satisfies is-parse-error
   parse("(let b (if (< 1 1) 4 5) (- b 9))") is ok(ex40)
   parse("(let q (= 3 3) q)") is ok(ex41)
@@ -329,16 +334,31 @@ where:
   parse("(let x 6 (if false 5 x))") is ok(ex35)
   parse("(cons false 5 x)") satisfies is-parse-error
   parse("(if false 5 x y)") satisfies is-parse-error
+
+  # functions
+  parse("(fun x x)") is ok(ex50)
+  parse("(fun y (+ y 1))") is ok(ex51)
+  parse("(fun x (not x))") is ok(ex52)
+
+  # function application
+  parse("((fun x x) 123)") is ok(ex60)
+  parse("((fun y (+ y 1)) 2)") is ok(ex61)
+  parse("((fun y (+ y 1)) false)") is ok(ex62)
+  parse("((fun x (not x)) false)") is ok(ex63)
+  parse("((fun x (not x)) 3)") is ok(ex64)
+  parse("(((fun x x) 123) true)") is ok(ex65)
+  parse("((fun x (x x)) (fun x (x x)))") is ok(omega)
 end
 
-#| (5 pts) Part 2: Scheme0 Desugarer
 
-   The new syntactic forms are technically not necessary since they
-   can be implemented in terms of existing constructs of Scheme0 Core
-   (in fact, some of the Scheme0 Core features aren't even necessary
-   -- can you guess which ones they are?). That is, they can be
-   implemented as "derived forms", or "syntactic sugar", and desugared
-   to more primitive language features.
+#| (5 pts) Part 2: Scheme1 Desugarer
+
+   Some of the new syntactic forms are technically unnecessary since
+   they can be implemented in terms of existing constructs of Scheme1
+   Core (in fact, some of the Scheme1 Core features aren't even
+   necessary -- can you guess which ones they are?). That is, they can
+   be implemented as "derived forms", or "syntactic sugar", and
+   desugared to more primitive language features.
 
    In this part, you will implement a desugaring pass to eliminate all
    syntactic sugar, resulting in an expression containing only core
@@ -358,22 +378,13 @@ check "desugar(...)":
     ite(val(bool(false)), val(bool(true)), val(bool(true))), val(bool(false)))
   desugar(ex21) is binexp(sub, val(num(0)), val(num(5)))
   desugar(ex22) is ex23
+  desugar(ex30) is app(ex50, val(num(3)))
+  desugar(ex31) is app(fn("yzw", ident("x")), binexp(add, val(num(4)), ident("x")))
+  desugar(ite(val(bool(true)),
+      letx("x", val(num(1)), ident("x")), letx("x", val(num(2)), ident("x")))) is
+  ite(val(bool(true)), app(ex50, val(num(1))), app(ex50, val(num(2))))
 end
 
-
-#| (10 pts) Part 3: Scheme0 Core Typechecker
-
-   In this part, you will implement a typechecker for Scheme0 Core
-   according to the typing relation given in
-   doc/scheme0_core_typing.pdf in the course repo.
-
-   That is, define a function 'tycheck' that takes a typing context
-   (mapping identifiers to types) and an expression, and returns the
-   type of that expression. As in the parser and interpreter, you may
-   find it helpful to break the problem down into smaller functions,
-   e.g., a function for typechecking unary expressions, a function for
-   typechecking binary expressions, etc.
-|#
 
 # An environment of A is a function from identifiers (strings) to
 # elements of type A.
@@ -389,71 +400,8 @@ fun upd<A>(e :: Env<A>, x :: String, new-a :: A) -> Env<A>:
   env(lam(y :: String): if string-equal(x, y): ok(new-a) else: e.e(y) end end)
 end
 
-# The initial type environment (typing context) contains no bindings.
-init-ctx :: Env<Type> = env(lam(x :: String): err(TypeError(x + " is unbound")) end)
 
-fun valType(v :: Val) -> Type:
-  cases (Val) v:
-    | bool(_) => tbool
-    | num(_) => tnum
-  end
-end
-
-fun assertType(gamma :: Env<Type>, e :: ExpC, expected :: Type) -> Result<Type>:
-  seq(tycheck(gamma, e), lam(ty):
-      if eq(ty, expected):
-        ok(ty)
-      else:
-        err(TypeError("assertType: expected " + to-repr(expected)
-              + ", got " + to-repr(ty)))
-      end
-    end)
-end
-
-fun tycheckUnexp(gamma :: Env<Type>, u :: Unop, e :: ExpC) -> Result<Type>:
-  cases (Unop) u:
-    | unot => assertType(gamma, e, tbool)
-    | uneg => err(TypeError("uneg should have been desugared"))
-  end
-end
-
-# Compute the type of expression 'e' under typing context 'gamma'.
-fun tycheck(gamma :: Env<Type>, e :: ExpC) -> Result<Type>:
-  ... # Fill in here
-end
-
-# These tests provide evidence that your typechecker is working properly.
-check "tycheck(...)":
-  tycheck(init-ctx, ex0) satisfies is-type-error
-  tycheck(init-ctx, ex1) is ok(tnum)
-  tycheck(init-ctx, ex2) is ok(tnum)
-  tycheck(init-ctx, ex3) is ok(tbool)
-  tycheck(init-ctx, ex4) is ok(tbool)
-  tycheck(init-ctx, ex5) is ok(tnum)
-  tycheck(init-ctx, ex6) is ok(tnum)
-  tycheck(init-ctx, ex7) is ok(tnum)
-  tycheck(init-ctx, ex8) is ok(tnum)
-  tycheck(init-ctx, ex9) is ok(tnum)
-  tycheck(init-ctx, ex10) is ok(tnum)
-  tycheck(init-ctx, ex11) satisfies is-type-error
-  tycheck(init-ctx, ex12) is ok(tnum)
-  tycheck(init-ctx, desugar(ex13)) is ok(tbool)
-  tycheck(init-ctx, desugar(ex14)) is ok(tbool)
-  tycheck(init-ctx, desugar(ex15)) is ok(tbool) 
-  tycheck(init-ctx, ex20) is ok(tbool)
-  tycheck(init-ctx, desugar(ex21)) is ok(tnum)
-  tycheck(init-ctx, ex30) is ok(tnum)
-  tycheck(init-ctx, ex31) satisfies is-type-error
-  tycheck(init-ctx, ex32) satisfies is-type-error
-  tycheck(init-ctx, ex33) satisfies is-type-error
-  tycheck(init-ctx, ex34) satisfies is-type-error
-  tycheck(init-ctx, ex35) is ok(tnum)
-  tycheck(init-ctx, ex40) is ok(tnum)
-  tycheck(init-ctx, ex41) is ok(tbool)
-end
-
-
-#| Scheme0 Core interpreter
+#| Scheme1 Core interpreter
 
    Since we haven't modified the core language, we don't have to
    extend the interpreter! This is the benefit of syntactic sugar --
@@ -465,25 +413,21 @@ end
    PA4 then you can contact the TA (Jacob Schaupp
    js400421@ohio.edu) for a copy. If you already have a working
    interpreter from PA4, then there's nothing for you to do in this
-   part besides copying over your implementation and verifying that
-   the entire Scheme0 pipeline works as intended.
+   part besides verifying that the entire Scheme1 pipeline is working.
 |#
 
 # Evaluate an expression under a given environment, producing a value.
 fun interp(rho :: Env<Val>, e :: ExpC) -> Result<Val>:
-  ... # Fill in here
+  ... # Fill in here (start by copying over your interpreter code from PA4)
 end
 
 # The initial variable environment contains no bindings.
 init-env :: Env<Val> = env(lam(x :: String): err(InterpError(x + " is unbound")) end)
 
-# End-to-end pipeline (parser -> desugarer -> typechecker -> interpreter).
+# End-to-end pipeline (parser -> desugarer -> interpreter).
 fun run(s :: String) -> Result<Val>:
   seq(parse(s), lam(e):
-      d = desugar(e)
-      seq(tycheck(init-ctx, d), lam(_):
-          interp(init-env, d)
-        end)
+      interp(init-env, desugar(e))
     end)
 end
 
@@ -507,51 +451,67 @@ check "interp(...)":
   interp(init-env, desugar(ex15)) is ok(bool(false))
   interp(init-env, ex20) is ok(bool(false))
   interp(init-env, desugar(ex21)) is ok(num(-5))
-  interp(init-env, ex30) is ok(num(3))
-  interp(init-env, ex31) satisfies is-interp-error
-  interp(init-env, ex32) satisfies is-interp-error
+  interp(init-env, desugar(ex30)) is ok(num(3))
+  interp(init-env, desugar(ex31)) satisfies is-interp-error
+  interp(init-env, desugar(ex32)) satisfies is-interp-error
   interp(init-env, ex33) is ok(num(5))
   interp(init-env, ex34) satisfies is-interp-error
-  interp(init-env, ex35) is ok(num(6))
-  interp(init-env, ex40) is ok(num(-4))
-  interp(init-env, ex41) is ok(bool(true))
+  interp(init-env, desugar(ex35)) is ok(num(6))
+  interp(init-env, desugar(ex40)) is ok(num(-4))
+  interp(init-env, desugar(ex41)) is ok(bool(true))  
+  interp(init-env, desugar(ex60)) is ok(num(123))
+  interp(init-env, desugar(ex61)) is ok(num(3))
+  interp(init-env, desugar(ex62)) satisfies is-interp-error
+  interp(init-env, desugar(ex63)) is ok(bool(true))
+  interp(init-env, desugar(ex64)) satisfies is-interp-error
+  interp(init-env, desugar(ex65)) satisfies is-interp-error
+
+  # Warning: the following test loops forever and eats up memory. This
+  # demonstrates that Scheme1 is capable of expressing divergent computations.
+  # interp(init-env, omega) satisfies is-interp-error
 end
 
-# These tests provide evidence that your parser, desugarer,
-# typechecker, and interpreter are all working properly.
+# These tests provide evidence that your parser, desugarer, and
+# interpreter are all working properly.
 check "run(...)":
-  run("x") satisfies is-type-error # unbound variable
+  run("x") satisfies is-interp-error # unbound variable
   run("3") is ok(num(3))
   run("true") is ok(bool(true))
   run("(* 3 4)") is ok(num(12))
-  run("(* 3 true)") satisfies is-type-error # boolean argument to multiplication
+  run("(* 3 true)") satisfies is-interp-error # boolean argument to multiplication
   run("(let x 3 4)") is ok(num(4))
-  run("(let x 3 (* x true))") satisfies is-type-error # boolean argument to multiplication
+  run("(let x 3 (* x true))") satisfies is-interp-error # boolean argument to multiplication
   run("(4 * 5)") satisfies is-parse-error
-  run("(* true false)") satisfies is-type-error # boolean argument to multiplication
+  run("(* true false)") satisfies is-interp-error # boolean argument to multiplication
   run("(let x 5 (* x x))") is ok(num(25))
   run("(LET x 5 (* x x))") satisfies is-parse-error
   run("(let x 4 (let x 5 (* x x)))") is ok(num(25))
   run("(+ (let x 0 (+ x x)) 0)") is ok(num(0))
   run("(/ (let x 0 0) (let x 0 x))") satisfies is-interp-error # division by zero
   run("(let x (let x (+ 3 4) x) (* x x))") is ok(num(49))
-  run("(* x 4)") satisfies is-type-error # unbound variable
-  run("(if true 0 true)") satisfies is-type-error # branches have different types
-  run("(if false 0 true)") satisfies is-type-error # branches have different types
+  run("(* x 4)") satisfies is-interp-error # unbound variable
+  run("(if true 0 true)") is ok(num(0))
+  run("(if false 0 true)") is ok(bool(true))
   run("(/ 1 2)") is ok(num(1/2))
   run("(- 0 (/ 1 2))") is ok(num(-1/2))
-  run("(not 123)") satisfies is-type-error # number argument to negation
+  run("(not 123)") satisfies is-interp-error # number argument to negation
   run("(let x 2 (let y 3 (let z 5 (- x (* y z)))))") is ok(num(-13))
-  run("(if 0 1 2)") satisfies is-type-error # non-boolean discriminee
-  run("(+ 123 false)") satisfies is-type-error # boolean argument to addition
+  run("(if 0 1 2)") satisfies is-interp-error # non-boolean discriminee
+  run("(+ 123 false)") satisfies is-interp-error # boolean argument to addition
   run("(neg 2)") is ok(num(-2))
   run("(and false true)") is ok(bool(false))
   run("(let b true (and b true))") is ok(bool(true))
   run("(let b true (or false b))") is ok(bool(true))
   run("(and (and false true) (or true false))") is ok(bool(false))
   run("(or (and false true) (or true false))") is ok(bool(true))
-  run("(or (and false true) (or x false))") satisfies is-type-error # unbound variable
+  run("(or (and false true) (or x false))") satisfies is-interp-error # unbound variable
   run("(let x false (or (and false true) (or x false)))") is ok(bool(false))
   run("(let b true (or (and false true) (or b false)))") is ok(bool(true))
+  run("((fun x x) 123)") is ok(num(123))
+  run("((fun y (+ y 1)) 2)") is ok(num(3))
+  run("((fun y (+ y 1)) false)") satisfies is-interp-error # bool + num
+  run("((fun x (not x)) false)") is ok(bool(true))
+  run("((fun x (not x)) 3)") satisfies is-interp-error # boolean negation on number
+  run("(((fun x x) 123) true)") satisfies is-interp-error # applying non-function
   # Add your own test cases here.
 end
