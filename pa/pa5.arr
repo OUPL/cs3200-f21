@@ -147,7 +147,7 @@ end
 |#
 
 
-#| (5 pts) Part 1: Scheme1 Parser
+#| (7 pts) Part 1: Scheme1 Parser
    
    In part 1, you will extend the Scheme0 Core parser from PA4 to
    support the additional syntactic forms of the Scheme1 source
@@ -160,19 +160,19 @@ end
 #| Scheme1 Abstract Syntax |#
 
 data Unop:
-  | unot
-  | uneg # new
+  | unot # core
+  | uneg # derived
 end
 
 data Binop:
-  | add
-  | sub
-  | mul
-  | div
-  | equ
-  | lt
-  | conj # new
-  | disj # new
+  | add  # core
+  | sub  # core
+  | mul  # core
+  | div  # core
+  | equ  # core
+  | lt   # core
+  | conj # derived
+  | disj # derived
 end
 
 data Val:
@@ -183,14 +183,14 @@ data Val:
 end
 
 data Exp:
-  | val(v :: Val)
-  | ident(s :: String)
-  | unexp(op :: Unop, e :: Exp)
-  | binexp(op :: Binop, e1 :: Exp, e2 :: Exp)
-  | ite(e1 :: Exp, e2 :: Exp, e3 :: Exp)
-  | letx(x :: String, e1 :: Exp, e2 :: Exp)
-  | fn(x :: String, body :: Exp)
-  | app(e1 :: Exp, e2 :: Exp)
+  | val(v :: Val)                             # core
+  | ident(s :: String)                        # core
+  | unexp(op :: Unop, e :: Exp)               # see Unop
+  | binexp(op :: Binop, e1 :: Exp, e2 :: Exp) # see Binop
+  | ite(e1 :: Exp, e2 :: Exp, e3 :: Exp)      # core
+  | letx(x :: String, e1 :: Exp, e2 :: Exp)   # derived
+  | fn(x :: String, body :: Exp)              # core
+  | app(e1 :: Exp, e2 :: Exp)                 # core
 end
     
 # A couple helper functions for binops.
@@ -351,7 +351,7 @@ where:
 end
 
 
-#| (5 pts) Part 2: Scheme1 Desugarer
+#| (6 pts) Part 2: Scheme1 Desugarer
 
    Some of the new syntactic forms are technically unnecessary since
    they can be implemented in terms of existing constructs of Scheme1
@@ -401,19 +401,21 @@ fun upd<A>(e :: Env<A>, x :: String, new-a :: A) -> Env<A>:
 end
 
 
-#| Scheme1 Core interpreter
+#| (7 pts) Part 3: Scheme1 Core Interpreter
 
-   Since we haven't modified the core language, we don't have to
-   extend the interpreter! This is the benefit of syntactic sugar --
-   it allows us to extend the source language without complicating the
-   internals of the language implementation (e.g., the typechecker and
-   interpreter).
+   In this part, you will update the interpreter from PA4 to
+   1) remove support for let expressions, and
+   2) add support for functions (fn and app).
+
+   Since the other new syntax is desugared to the core language, we
+   don't have to extend the interpreter to support them!This is the
+   benefit of syntactic sugar -- it allows us to extend the source
+   language without complicating the internals of the language
+   implementation (e.g., the typechecker and interpreter).
 
    As with the parser, if you don't have a working interpreter from
    PA4 then you can contact the TA (Jacob Schaupp
-   js400421@ohio.edu) for a copy. If you already have a working
-   interpreter from PA4, then there's nothing for you to do in this
-   part besides verifying that the entire Scheme1 pipeline is working.
+   js400421@ohio.edu) for a copy.
 |#
 
 # Evaluate an expression under a given environment, producing a value.
