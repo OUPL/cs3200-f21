@@ -266,12 +266,16 @@ ex41 = letx("q", binexp(equ, val(num(3)), val(num(3))), ident("q"))
 ex50 = fn("x", ident("x"))
 ex51 = fn("y", binexp(add, ident("y"), val(num(1))))
 ex52 = fn("x", unexp(unot, ident("x")))
+ex53 = fn("x", fn("y", binexp(add, ident("x"), ident("y"))))
 ex60 = app(ex50, val(num(123)))
 ex61 = app(ex51, val(num(2)))
 ex62 = app(ex51, val(bool(false)))
 ex63 = app(ex52, val(bool(false)))
 ex64 = app(ex52, val(num(3)))
 ex65 = app(ex60, val(bool(true)))
+ex66 = app(ex53, val(num(3)))
+ex67 = app(ex66, val(num(5)))
+ex68 = app(app(ex53, val(num(1))), val(bool(true)))
 # Ω = (λx. x x) (λx. x x)
 omega = app(fn("x", app(ident("x"), ident("x"))), fn("x", app(ident("x"), ident("x"))))
 
@@ -339,6 +343,7 @@ where:
   parse("(fun x x)") is ok(ex50)
   parse("(fun y (+ y 1))") is ok(ex51)
   parse("(fun x (not x))") is ok(ex52)
+  parse("(fun x (fun y (+ x y)))") is ok(ex53)
 
   # function application
   parse("((fun x x) 123)") is ok(ex60)
@@ -347,6 +352,9 @@ where:
   parse("((fun x (not x)) false)") is ok(ex63)
   parse("((fun x (not x)) 3)") is ok(ex64)
   parse("(((fun x x) 123) true)") is ok(ex65)
+  parse("((fun x (fun y (+ x y))) 3)") is ok(ex66)
+  parse("(((fun x (fun y (+ x y))) 3) 5)") is ok(ex67)
+  parse("(((fun x (fun y (+ x y))) 1) true)") is ok(ex68)
   parse("((fun x (x x)) (fun x (x x)))") is ok(omega)
 end
 
@@ -468,9 +476,20 @@ check "interp(...)":
   interp(init-env, desugar(ex64)) satisfies is-interp-error
   interp(init-env, desugar(ex65)) satisfies is-interp-error
 
-  # Warning: the following test loops forever and eats up memory. This
-  # demonstrates that Scheme1 is capable of expressing divergent computations.
+  # Warning: the following test loops forever and eats up memory.
   # interp(init-env, omega) satisfies is-interp-error
+
+  # Implementing multiplication as repeated addition using the Y
+  # fixed-point combinator for recursion.
+  # Y = λf. (λx. f (λy. x x y)) (λx. f (λy. x x y))
+  fix = fn("f", app(fn("x", app(ident("f"), fn("y",
+            app(app(ident("x"), ident("x")), ident("y"))))),
+      fn("x", app(ident("f"), fn("y", app(app(ident("x"), ident("x")), ident("y")))))))
+  mult-g = fn("f", fn("m", fn("n", ite(binexp(equ, ident("n"), val(num(0))), val(num(0)),
+          binexp(add, ident("m"), app(app(ident("f"), ident("m")),
+              binexp(sub, ident("n"), val(num(1)))))))))
+  nat-mult = app(fix, mult-g)
+  interp(init-env, app(app(nat-mult, val(num(5))), val(num(6)))) is ok(num(30))
 end
 
 # These tests provide evidence that your parser, desugarer, and
@@ -515,5 +534,7 @@ check "run(...)":
   run("((fun x (not x)) false)") is ok(bool(true))
   run("((fun x (not x)) 3)") satisfies is-interp-error # boolean negation on number
   run("(((fun x x) 123) true)") satisfies is-interp-error # applying non-function
+  run("(((fun m (fun n (/ m n))) 10) 5)") is ok(num(2))
+  run("(((fun m (fun n (/ m n))) 10) (- 1 1))") satisfies is-interp-error # division by zero
   # Add your own test cases here.
 end
