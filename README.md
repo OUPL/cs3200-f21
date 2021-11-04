@@ -70,7 +70,7 @@ The schedule is subject to revision.
 | Week 10 (25 Oct) | Interpreting conditionals and functions | [PAPL 26](https://papl.cs.brown.edu/2020/growing-lang.html), [27](https://papl.cs.brown.edu/2020/Interpreting_Functions.html) | Q3 (29 Oct) |
 | Week 11 (1 Nov) | Types, typing judgments | [PAPL 28](https://papl.cs.brown.edu/2020/types.html), Supplementary: TAPL 8 | [PA5: Scheme1](pa/5.md) (6 Nov) |
 | Week 12 (8 Nov) | Types contd., type safety | [PAPL 29](https://papl.cs.brown.edu/2020/safety-soundness.html) | Q4 (12 Nov) |
-| Week 13 (15 Nov) | Parametric polymorphism | [PAPL 30](https://papl.cs.brown.edu/2020/para-poly.html) | [PA6: Typed Scheme1](pa/6.md) (20 Nov) |
+| Week 13 (15 Nov) | Parametric polymorphism, type inference | [PAPL 30](https://papl.cs.brown.edu/2020/para-poly.html), [31](https://papl.cs.brown.edu/2020/Type_Inference.html) | [PA6: Typed Scheme1](pa/6.md) (20 Nov) |
 | Week 14 (22 Nov) | TBD / Thanksgiving | TBD | No quiz |
 | Week 15 (29 Nov) | TBD / Final review | TBD | No quiz -- study for finals! |
 | Exam week (6 Dec) | **FINAL EXAM**: Wednesday 12/8/21 12:20pm in Stocker 103 | | |
