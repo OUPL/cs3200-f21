@@ -1,46 +1,54 @@
 
-
 data Exp:
   | ENum(n :: Number)
-  | EPlus(l :: Exp, r :: Exp) # l + r
-  | EDiv(l :: Exp, r :: Exp) # l / r
+  | ETrue
+  | EFalse
+  | EPlus(e1 :: Exp, e2 :: Exp)
+  | EEq(e1 :: Exp, e2 :: Exp)
+  | EIte(e1 :: Exp, e2 :: Exp, e3 :: Exp)
+end
+
+fun is-value(e :: Exp) -> Boolean:
+  is-ENum(e) or is-ETrue(e) or is-EFalse(e)
 end
 
 fun step(e :: Exp) -> Exp:
   cases (Exp) e:
-    | ENum(n) => ENum(n)
+    | ENum(_) => e
+    | ETrue => e
+    | EFalse => e
     | EPlus(e1, e2) =>
       cases (Exp) e1:
-        | ENum(n) =>
+        | ENum(n1) =>
           cases (Exp) e2:
-            | ENum(m) =>
-              ENum(n + m)
+            | ENum(n2) => ENum(n1 + n2)
             | else => EPlus(e1, step(e2))
           end
         | else => EPlus(step(e1), e2)
       end
-    | EDiv(e1, e2) =>
+    | EEq(e1, e2) =>
       cases (Exp) e1:
-        | ENum(n) =>
+        | ENum(n1) =>
           cases (Exp) e2:
-            | ENum(m) =>
-              if m == 0:
-                e
-              else:
-                ENum(n / m)
-              end
-            | else => EDiv(e1, step(e2))
+            | ENum(n2) => if n1 == n2: ETrue else: EFalse end
+            | else => EEq(e1, step(e2))
           end
-        | else => EDiv(step(e1), e2)
+        | else => EEq(step(e1), e2)
+      end
+    | EIte(e1, e2, e3) =>
+      cases (Exp) e1:
+        | ETrue => e2
+        | EFalse => e3
+        | else => EIte(step(e1), e2, e3)
       end
   end
 end
 
-fun eval(e :: Exp) -> Exp:
+fun star_step(e :: Exp) -> Exp:
   e2 = step(e)
   if e2 == e:
     e
   else:
-    eval(e2)
+    star_step(e2)
   end
 end
