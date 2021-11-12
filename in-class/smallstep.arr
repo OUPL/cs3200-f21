@@ -12,6 +12,11 @@ fun is-value(e :: Exp) -> Boolean:
   is-ENum(e) or is-ETrue(e) or is-EFalse(e)
 end
 
+data Type:
+  | TNum
+  | TBool
+end
+
 fun step(e :: Exp) -> Exp:
   cases (Exp) e:
     | ENum(_) => e
@@ -50,5 +55,33 @@ fun star_step(e :: Exp) -> Exp:
     e
   else:
     star_step(e2)
+  end
+end
+
+fun tycheck(e :: Exp) -> Type:
+  cases (Exp) e:
+    | ENum(_) => TNum
+    | EFalse => TBool
+    | ETrue => TBool
+    | EPlus(e1, e2) =>
+      if (tycheck(e1) == TNum) and (tycheck(e2) == TNum):
+        TNum
+      else:
+        raise("EPlus")
+      end
+    | EEq(e1, e2) =>
+      if (tycheck(e1) == TNum) and (tycheck(e2) == TNum):
+        TBool
+      else:
+        raise("EEq")
+      end
+    | EIte(e1, e2, e3) =>
+      t2 = tycheck(e2)
+      t3 = tycheck(e3)
+      if (tycheck(e1) == TBool) and (t2 == t3):
+        t2
+      else:
+        raise("EIte")
+      end
   end
 end
