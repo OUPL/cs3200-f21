@@ -121,9 +121,11 @@ end
 
 
 #| In this assignment, you'll be extending Scheme1 Core to Typed
-   Scheme1 Core. First, you'll extend the parser to support the
+   Scheme1 Core. In part 1, you'll extend the parser to support the
    extended syntax given below (which includes types and 'rec'
-   expressions). Then, in part 2, you'll implement a typechecker!
+   expressions). In part 2, you'll update the desugarer to account for
+   the syntax extensions from part 1. In part 3, you'll implement a
+   typechecker!
 
    Note that our old trick for encoding recursion no longer works once
    we add a type system (try to recreate the 'omega' example from PA5
@@ -133,6 +135,9 @@ end
    expression of the form '(rec x t e)' should be understood as "let x
    stand for recursive occurrences of e in e, where e (and thus x as
    well) has type t".
+
+   Thus, in part 4, you must extend the interpreter to support
+   recursive expressions. Good luck!
 
    Types
    t ::= bool
