@@ -178,7 +178,7 @@ end
 
 #| (5 pts) Part 1: Typed Scheme1 Parser
 
-   Extend the Scheme0 Core parser to parse types (now included in type
+   Extend the Scheme1 parser to parse types (now included in type
    annotations on 'let', 'fun', and 'rec' expressions) as well as
    'rec' expressions.
 |#
