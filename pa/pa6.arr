@@ -120,8 +120,8 @@ end
 #############################
 
 
-#| In this assignment, you'll be extending Scheme1 Core to Typed
-   Scheme1 Core. In part 1, you'll extend the parser to support the
+#| In this assignment, you'll be extending Scheme1 to Typed
+   Scheme1. In part 1, you'll extend the parser to support the
    extended syntax given below (which includes types and 'rec'
    expressions). In part 2, you'll update the desugarer to account for
    the syntax extensions from part 1. In part 3, you'll implement a
