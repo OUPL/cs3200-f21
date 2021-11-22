@@ -240,7 +240,7 @@ data Exp:
   | casex(e1 :: Exp, e2 :: Exp, e3 :: Exp)
   | nil(t :: Type)
   | cons(e1 :: Exp, e2 :: Exp)
-  | foldr(e1 :: Exp, e2 :: Exp, e3 :: Exp)
+  | efold(e1 :: Exp, e2 :: Exp, e3 :: Exp)
 end
 
 # A couple helper functions for binops.
@@ -282,7 +282,7 @@ fun is-core(e :: Exp) -> Boolean:
     | casex(e1, e2, e3) => is-core(e1) and is-core(e2) and is-core(e3)
     | nil(_) => true
     | cons(e1, e2) => is-core(e1) and is-core(e2)
-    | foldr(e1, e2, e3) => is-core(e1) and is-core(e2) and is-core(e3)
+    | efold(e1, e2, e3) => is-core(e1) and is-core(e2) and is-core(e3)
   end
 end
 
